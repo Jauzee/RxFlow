@@ -20,10 +20,25 @@ class WishlistViewController: UIViewController, StoryboardBased, ViewModelBased 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        registerForPreviewing(with: self, sourceView: moviesTable)
         self.moviesTable.delegate = self
         self.moviesTable.dataSource = self
     }
+}
+
+extension WishlistViewController: UIViewControllerPreviewingDelegate {
+
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        viewModel.pick(movieId: viewModel.movies[0].id)
+    }
+
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        let id = viewModel.movies[0].id
+        let viewController = MovieDetailViewController.instantiate(withViewModel: MovieDetailViewModel(withMovieId: id), andServices: viewModel.services)
+        viewController.title = viewController.viewModel.title
+        return viewController
+    }
+
 }
 
 extension WishlistViewController: UITableViewDelegate {
